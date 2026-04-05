@@ -75,8 +75,27 @@ class Dashboard:
 
     def _render_top_left(self) -> Panel:
         """Render branch and status info."""
-        content = Text(f"Branch: {self.data.branch}")
-        return Panel(content, title="Repository", border_style=COLORS["primary"])
+        status = self.data.status
+
+        # Build status lines with color coding
+        status_text = Text()
+        status_text.append("Branch: ", style="bold")
+        status_text.append(self.data.branch, style=COLORS["accent"])
+        status_text.append("\n\n")
+
+        status_text.append("● ", style=COLORS["success"])
+        status_text.append(f"Staged: {status.get('staged', 0)}\n")
+        status_text.append("● ", style=COLORS["warning"])
+        status_text.append(f"Unstaged: {status.get('unstaged', 0)}\n")
+        status_text.append("● ", style=COLORS["muted"])
+        status_text.append(f"Untracked: {status.get('untracked', 0)}")
+
+        return Panel(
+            status_text,
+            title=Text("Repository Status", style=PANEL_TITLE_STYLE),
+            border_style=COLORS["primary"],
+            padding=(1, 2)
+        )
 
     def _render_top_right(self) -> Panel:
         """Render last commit info."""
