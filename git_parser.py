@@ -70,3 +70,19 @@ class GitParser:
         unstaged = len(self.repo.index.diff(None))
         untracked = len(self.repo.untracked_files)
         return {"staged": staged, "unstaged": unstaged, "untracked": untracked}
+
+    def get_recent_commits(self, n: int = 7) -> list[dict]:
+        """Get last n commits as a list."""
+        if not self.is_valid_repo():
+            return []
+        commits = []
+        for commit in self.repo.iter_commits(max_count=n):
+            committed_date = commit.committed_datetime
+            age = self._format_age(committed_date)
+            commits.append({
+                "hash": commit.hexsha[:7],
+                "message": commit.message.strip().split("\n")[0][:50],
+                "author": str(commit.author).split(" <")[0],
+                "time": age,
+            })
+        return commits
