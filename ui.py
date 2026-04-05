@@ -211,6 +211,18 @@ class Dashboard:
         )
 
     def _render_footer(self) -> Panel:
-        """Render footer with status info."""
-        content = Text(f"GitPulse | {self.data.repo_path} | Last refresh: {self.data.refresh_time}")
-        return Panel(content, style=PANEL_TITLE_STYLE)
+        """Render footer with repo path and refresh time."""
+        footer_text = Text()
+        footer_text.append("GitPulse", style=f"bold {COLORS['primary']}")
+        footer_text.append("  │  ", style=COLORS["muted"])
+        footer_text.append(f"{self.data.repo_path}")
+        footer_text.append("  │  ", style=COLORS["muted"])
+        footer_text.append(f"Updated: {self.data.refresh_time}", style=COLORS["muted"])
+        footer_text.append("  │  ", style=COLORS["muted"])
+        footer_text.append("Press Ctrl+C to exit", style=COLORS["muted"])
+
+        return Panel(
+            footer_text,
+            border_style=COLORS["border"],
+            box=box.SINGLE
+        )
