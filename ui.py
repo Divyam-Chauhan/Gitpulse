@@ -99,8 +99,30 @@ class Dashboard:
 
     def _render_top_right(self) -> Panel:
         """Render last commit info."""
-        content = Text("Last commit info pending...")
-        return Panel(content, title="Latest Commit", border_style=COLORS["secondary"])
+        commit = self.data.last_commit
+
+        commit_text = Text()
+        commit_text.append("Hash: ", style="bold")
+        commit_text.append(commit.get("hash", "N/A")[:7], style=COLORS["accent"])
+        commit_text.append("\n\n")
+
+        commit_text.append("Message: ", style="bold")
+        commit_text.append(commit.get("message", "N/A"))
+        commit_text.append("\n\n")
+
+        commit_text.append("Author: ", style="bold")
+        commit_text.append(commit.get("author", "N/A"))
+        commit_text.append("\n")
+
+        commit_text.append("Time: ", style="bold")
+        commit_text.append(commit.get("time", "N/A"), style=COLORS["muted"])
+
+        return Panel(
+            commit_text,
+            title=Text("Latest Commit", style=PANEL_TITLE_STYLE),
+            border_style=COLORS["secondary"],
+            padding=(1, 2)
+        )
 
     def _render_bottom_left(self) -> Table:
         """Render recent commits table."""
