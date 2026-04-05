@@ -157,9 +157,58 @@ class Dashboard:
         )
 
     def _render_bottom_right(self) -> Panel:
-        """Render today's changes panel."""
-        content = Text("Today's changes pending...")
-        return Panel(content, title="Today's Changes", border_style=COLORS["success"])
+        """Render today's changes panel with file diffs."""
+        if not self.data.today_changes:
+            changes_text = Text("No changes today", style=COLORS["muted"])
+        else:
+            changes_text = Text()
+            total_additions = sum(c.get("additions", 0) for c in self.data.today_changes)
+            total_deletions = sum(c.get("deletions", 0) for c in self.data.today_changes)
+
+            # Summary line
+            changes_text.append("Today: ", style="bold")
+            changes_text.append(
+                f"+{total_additions}",
+                style=COLORS["success"]
+            )
+            changes_text.append(" / ")
+            changes_text.append(
+                f"-{total_deletions}",
+                style=COLORS["error"]
+            )
+            changes_text.append(f" in {len(self.data.today_changes)} files\n\n")
+
+            # File list with indicators
+            for change in self.data.today_changes[:15]:
+                file_path = change.get("file", "Unknown")
+                additions = change.get("additions", 0)
+                deletions = change.get("deletions", 0)
+
+                if len(file_path) > 35:
+                    file_path = "..." + file_path[-32:]
+
+                changes_text.append(f"{file_path}\n", style=COLORS["secondary"])
+                changes_text.append("  ")
+                if additions > 0:
+                    changes_text.append(f"+{additions}", style=COLORS["success"])
+                if additions > 0 and deletions > 0:
+                    changes_text.append(" / ")
+                if deletions > 0:
+                    changes_text.append(f"-{deletions}", style=COLORS["error"])
+                changes_text.append("\n")
+
+            if len(self.data.today_changes) > 15:
+                changes_text.append(
+                    f"\n... and {len(self.data.today_changes) - 15} more files",
+                    style=COLORS["muted"]
+                )
+
+        return Panel(
+            changes_text,
+            title=Text("Today's Changes", style=PANEL_TITLE_STYLE),
+            border_style=COLORS["success"],
+            padding=(1, 2)
+        )
 
     def _render_footer(self) -> Panel:
         """Render footer with status info."""
