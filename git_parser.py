@@ -61,3 +61,12 @@ class GitParser:
             "author": str(commit.author),
             "time": age,
         }
+
+    def get_status_counts(self) -> dict[str, int]:
+        """Get counts of staged, unstaged, and untracked files."""
+        if not self.is_valid_repo():
+            return {"staged": 0, "unstaged": 0, "untracked": 0}
+        staged = len(self.repo.index.diff("HEAD"))
+        unstaged = len(self.repo.index.diff(None))
+        untracked = len(self.repo.untracked_files)
+        return {"staged": staged, "unstaged": unstaged, "untracked": untracked}
