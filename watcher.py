@@ -16,6 +16,10 @@ class GitChangeHandler(FileSystemEventHandler):
 
     def on_any_event(self, event):
         """Called on any filesystem event."""
+        if ".git" in event.src_path:
+            return
+        if event.src_path.endswith("~") or ".swp" in event.src_path:
+            return
         self._changed.set()
         if self.callback:
             self.callback()
