@@ -124,12 +124,37 @@ class Dashboard:
             padding=(1, 2)
         )
 
-    def _render_bottom_left(self) -> Table:
+    def _render_bottom_left(self) -> Panel:
         """Render recent commits table."""
-        table = Table(title="Recent Commits", box=box.SIMPLE)
-        table.add_column("Hash", style=COLORS["accent"])
-        table.add_column("Message")
-        return table
+        table = Table(
+            box=box.SIMPLE,
+            show_header=True,
+            header_style="bold",
+            expand=True,
+            row_styles=["", "dim"]
+        )
+        table.add_column("Hash", style=COLORS["accent"], width=8, no_wrap=True)
+        table.add_column("Message", ratio=2, overflow="ellipsis")
+        table.add_column("Author", style=COLORS["secondary"], width=15, no_wrap=True)
+        table.add_column("Time", style=COLORS["muted"], width=12, no_wrap=True)
+
+        for commit in self.data.recent_commits[:10]:
+            msg = commit.get("message", "")
+            if len(msg) > 50:
+                msg = msg[:47] + "..."
+            table.add_row(
+                commit.get("hash", "N/A")[:7],
+                msg,
+                commit.get("author", "N/A")[:14],
+                commit.get("time", "N/A")
+            )
+
+        return Panel(
+            table,
+            title=Text("Recent Commits", style=PANEL_TITLE_STYLE),
+            border_style=COLORS["accent"],
+            padding=(1, 1)
+        )
 
     def _render_bottom_right(self) -> Panel:
         """Render today's changes panel."""
