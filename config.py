@@ -4,24 +4,36 @@ from dataclasses import dataclass
 from pathlib import Path
 
 
+# Color scheme for the dashboard
+COLORS = {
+    "primary": "cyan",
+    "secondary": "blue",
+    "accent": "bright_yellow",
+    "success": "green",
+    "warning": "yellow",
+    "error": "red",
+    "muted": "dim",
+    "branch": "bright_cyan",
+    "commit_hash": "bright_yellow",
+    "author": "bright_green",
+    "time": "dim",
+    "staged": "green",
+    "unstaged": "yellow",
+    "untracked": "red",
+    "header": "bright_blue",
+    "border": "blue",
+    "footer": "dim",
+}
+
+# Panel title style
+PANEL_TITLE_STYLE = "bold bright_white"
+
+
 @dataclass
 class Config:
     """Dashboard configuration."""
     refresh_rate: float = 2.0
     repo_path: Path = None
-
-    colors = {
-        "branch": "bright_cyan",
-        "commit_hash": "bright_yellow",
-        "author": "bright_green",
-        "time": "dim",
-        "staged": "green",
-        "unstaged": "yellow",
-        "untracked": "red",
-        "header": "bright_blue",
-        "border": "blue",
-        "footer": "dim",
-    }
 
     def __post_init__(self):
         if self.repo_path is None:
