@@ -86,3 +86,35 @@ class GitParser:
                 "time": age,
             })
         return commits
+
+    def get_today_changes(self) -> list[dict]:
+        """Get files changed today with +/- line counts."""
+        if not self.is_valid_repo():
+            return []
+        today = datetime.now(timezone.utc).date()
+        files = []
+        today_commits = []
+        for commit in self.repo.iter_commits():
+            commit_date = commit.committed_datetime.date()
+            if commit_date == today:
+                today_commits.append(commit)
+            elif commit_date < today:
+                break
+        if not today_commits:
+            return []
+        try:
+            today_earliest = today_commits[-1]
+            today_latest = today_commits[0]
+            diff_index = today_earliest.diff(today_latest)
+            for diff_item in diff_index:
+                path = diff_item.a_path or diff_item.b_path
+                if not path:
+                    continue
+                files.append({"path": path, "added": 0, "removed": 0})
+        except Exception:
+            pass
+        return files
+
+    def get_last_refresh_time(self) -> str:
+        """Get formatted timestamp for last refresh."""
+        return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
