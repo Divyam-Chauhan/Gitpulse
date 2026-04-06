@@ -1,12 +1,16 @@
 """GitPulse - Real-time Terminal Git Dashboard."""
 import argparse
 import sys
+import time
 from pathlib import Path
+from datetime import datetime
+
+from rich.live import Live
 
 from config import Config
 from git_parser import GitParser
 from ui import Dashboard, GitData
-from watcher import RepoWatcher
+from watcher import GitWatcher
 
 
 def parse_args():
@@ -29,6 +33,19 @@ def parse_args():
     return parser.parse_args()
 
 
+def build_git_data(git_parser: GitParser, repo_path: Path) -> GitData:
+    """Build GitData from current repository state."""
+    return GitData(
+        branch=git_parser.get_current_branch(),
+        last_commit=git_parser.get_last_commit(),
+        status=git_parser.get_status_counts(),
+        recent_commits=git_parser.get_recent_commits(),
+        today_changes=git_parser.get_today_changes(),
+        repo_path=str(repo_path),
+        refresh_time=datetime.now().strftime("%H:%M:%S")
+    )
+
+
 def main():
     """Main entry point for GitPulse dashboard."""
     args = parse_args()
@@ -38,13 +55,40 @@ def main():
         print(f"Error: {config.repo_path} is not a valid git repository")
         sys.exit(1)
 
+    print(f"Starting GitPulse for: {config.repo_path}")
+    print(f"Refresh rate: {config.refresh_rate}s")
+    print("Press Ctrl+C to exit\n")
+    time.sleep(1)
+
     dashboard = Dashboard()
     git_parser = GitParser(config.repo_path)
-    watcher = RepoWatcher(config.repo_path)
+    watcher = GitWatcher(config.repo_path)
 
-    # TODO: Implement setup phase
-    # TODO: Implement live loop
-    # TODO: Implement teardown
+    # Setup: Initialize watcher
+    watcher.start()
+
+    try:
+        # Initial data load
+        data = build_git_data(git_parser, config.repo_path)
+        dashboard.update(data)
+
+        with Live(
+            dashboard.layout,
+            console=dashboard.console,
+            refresh_per_second=1 / config.refresh_rate,
+            screen=True
+        ) as live:
+            while True:
+                if watcher.has_changes():
+                    data = build_git_data(git_parser, config.repo_path)
+                    dashboard.update(data)
+                    watcher.clear_changes()
+                time.sleep(config.refresh_rate)
+
+    except KeyboardInterrupt:
+        print("\nExiting...")
+    finally:
+        watcher.stop()
 
 
 if __name__ == "__main__":
