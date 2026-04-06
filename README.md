@@ -19,7 +19,7 @@ GitPulse provides a live-updating terminal interface showing:
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/Divyam-Chauhan/Gitpulse
 cd gitpulse
 
 # Install dependencies
