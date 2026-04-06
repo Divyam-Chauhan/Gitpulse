@@ -5,6 +5,8 @@ A real-time terminal dashboard for monitoring git repositories.
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![Rich](https://img.shields.io/badge/rich-13+-green.svg)
 
+![GitPulse Demo](demo.png)
+
 ## Overview
 
 GitPulse provides a live-updating terminal interface showing:
