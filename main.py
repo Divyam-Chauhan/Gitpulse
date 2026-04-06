@@ -75,14 +75,17 @@ def main():
         with Live(
             dashboard.layout,
             console=dashboard.console,
-            refresh_per_second=1 / config.refresh_rate,
+            refresh_per_second=1,
             screen=True
         ) as live:
             while True:
-                if watcher.has_changes():
-                    data = build_git_data(git_parser, config.repo_path)
-                    dashboard.update(data)
+                # Check for file changes, but also refresh periodically
+                has_file_change = watcher.has_changes()
+                if has_file_change:
                     watcher.clear_changes()
+
+                data = build_git_data(git_parser, config.repo_path)
+                dashboard.update(data)
                 time.sleep(config.refresh_rate)
 
     except KeyboardInterrupt:

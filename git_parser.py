@@ -99,28 +99,46 @@ class GitParser:
         if not self.is_valid_repo():
             return []
         today = datetime.now(timezone.utc).date()
-        files = []
-        today_commits = []
+        files = {}
+
         for commit in self.repo.iter_commits():
             commit_date = commit.committed_datetime.date()
-            if commit_date == today:
-                today_commits.append(commit)
-            elif commit_date < today:
+            if commit_date != today:
                 break
-        if not today_commits:
-            return []
-        try:
-            today_earliest = today_commits[-1]
-            today_latest = today_commits[0]
-            diff_index = today_earliest.diff(today_latest)
-            for diff_item in diff_index:
-                path = diff_item.a_path or diff_item.b_path
-                if not path:
-                    continue
-                files.append({"path": path, "added": 0, "removed": 0})
-        except Exception:
-            pass
-        return files
+
+            try:
+                parent = commit.parents[0] if commit.parents else None
+                if parent:
+                    # Get diff with patch to count lines
+                    diff = parent.diff(commit, create_patch=True)
+                    for diff_item in diff:
+                        path = diff_item.b_path or diff_item.a_path
+                        if not path:
+                            continue
+
+                        if path not in files:
+                            files[path] = {"path": path, "added": 0, "removed": 0}
+
+                        try:
+                            if diff_item.diff:
+                                diff_text = diff_item.diff.decode('utf-8', errors='replace') if isinstance(diff_item.diff, bytes) else str(diff_item.diff)
+                                added = len([l for l in diff_text.split('\n') if l.startswith('+') and not l.startswith('+++')])
+                                removed = len([l for l in diff_text.split('\n') if l.startswith('-') and not l.startswith('---')])
+                                files[path]["added"] += added
+                                files[path]["removed"] += removed
+                        except:
+                            pass
+                else:
+                    # Initial commit - list files
+                    for item in commit.tree.traverse():
+                        if item.type == 'blob':
+                            path = item.path
+                            if path not in files:
+                                files[path] = {"path": path, "added": item.size, "removed": 0}
+            except Exception:
+                pass
+
+        return list(files.values())
 
     def get_last_refresh_time(self) -> str:
         """Get formatted timestamp for last refresh."""

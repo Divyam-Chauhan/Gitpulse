@@ -162,8 +162,8 @@ class Dashboard:
             changes_text = Text("No changes today", style=COLORS["muted"])
         else:
             changes_text = Text()
-            total_additions = sum(c.get("additions", 0) for c in self.data.today_changes)
-            total_deletions = sum(c.get("deletions", 0) for c in self.data.today_changes)
+            total_additions = sum(c.get("added", 0) for c in self.data.today_changes)
+            total_deletions = sum(c.get("removed", 0) for c in self.data.today_changes)
 
             # Summary line
             changes_text.append("Today: ", style="bold")
@@ -180,9 +180,9 @@ class Dashboard:
 
             # File list with indicators
             for change in self.data.today_changes[:15]:
-                file_path = change.get("file", "Unknown")
-                additions = change.get("additions", 0)
-                deletions = change.get("deletions", 0)
+                file_path = change.get("path", "Unknown")
+                additions = change.get("added", 0)
+                deletions = change.get("removed", 0)
 
                 if len(file_path) > 35:
                     file_path = "..." + file_path[-32:]
