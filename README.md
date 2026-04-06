@@ -5,7 +5,7 @@ A real-time terminal dashboard for monitoring git repositories.
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![Rich](https://img.shields.io/badge/rich-13+-green.svg)
 
-![GitPulse Demo](demo.png)
+![GitPulse Demo](Demo/Demo.png)
 
 ## Overview
 
@@ -19,7 +19,7 @@ GitPulse provides a live-updating terminal interface showing:
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/Divyam-Chauhan/Gitpulse
 cd gitpulse
 
 # Install dependencies
