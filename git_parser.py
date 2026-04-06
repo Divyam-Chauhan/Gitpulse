@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from git import Repo
-from git.exc import InvalidGitRepositoryError
+from git.exc import InvalidGitRepositoryError, RepositoryDirtyError
 
 
 class GitParser:
@@ -11,9 +11,10 @@ class GitParser:
 
     def __init__(self, repo_path: Path):
         self.repo_path = Path(repo_path)
+        self.repo = None
         try:
             self.repo = Repo(self.repo_path)
-        except InvalidGitRepositoryError:
+        except (InvalidGitRepositoryError, Exception) as e:
             self.repo = None
 
     def is_valid_repo(self) -> bool:
@@ -27,8 +28,11 @@ class GitParser:
         try:
             return self.repo.active_branch.name
         except Exception:
-            head = self.repo.head.commit
-            return f"detached ({head.hexsha[:7]})"
+            try:
+                head = self.repo.head.commit
+                return f"detached ({head.hexsha[:7]})"
+            except Exception:
+                return "N/A"
 
     def _format_age(self, dt: datetime) -> str:
         """Format a datetime as relative age string."""
@@ -52,15 +56,18 @@ class GitParser:
         """Get info about the most recent commit."""
         if not self.is_valid_repo():
             return {"hash": "", "message": "", "author": "", "time": ""}
-        commit = self.repo.head.commit
-        committed_date = commit.committed_datetime
-        age = self._format_age(committed_date)
-        return {
-            "hash": commit.hexsha[:7],
-            "message": commit.message.strip().split("\n")[0],
-            "author": str(commit.author),
-            "time": age,
-        }
+        try:
+            commit = self.repo.head.commit
+            committed_date = commit.committed_datetime
+            age = self._format_age(committed_date)
+            return {
+                "hash": commit.hexsha[:7],
+                "message": commit.message.strip().split("\n")[0],
+                "author": str(commit.author),
+                "time": age,
+            }
+        except Exception:
+            return {"hash": "", "message": "No commits", "author": "", "time": ""}
 
     def get_status_counts(self) -> dict[str, int]:
         """Get counts of staged, unstaged, and untracked files."""
