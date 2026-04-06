@@ -83,11 +83,11 @@ class Dashboard:
         status_text.append(self.data.branch, style=COLORS["accent"])
         status_text.append("\n\n")
 
-        status_text.append("● ", style=COLORS["success"])
+        status_text.append("[+] ", style=COLORS["success"])
         status_text.append(f"Staged: {status.get('staged', 0)}\n")
-        status_text.append("● ", style=COLORS["warning"])
+        status_text.append("[~] ", style=COLORS["warning"])
         status_text.append(f"Unstaged: {status.get('unstaged', 0)}\n")
-        status_text.append("● ", style=COLORS["muted"])
+        status_text.append("[?] ", style=COLORS["muted"])
         status_text.append(f"Untracked: {status.get('untracked', 0)}")
 
         return Panel(
@@ -224,5 +224,5 @@ class Dashboard:
         return Panel(
             footer_text,
             border_style=COLORS["border"],
-            box=box.SINGLE
+            box=box.SQUARE
         )
