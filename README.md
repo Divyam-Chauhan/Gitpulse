@@ -6,6 +6,9 @@ A real-time terminal dashboard for monitoring git repositories.
 ![Rich](https://img.shields.io/badge/rich-13+-green.svg)
 
 ![GitPulse Demo](Demo/Demo.png)
+## Why GitPulse?
+
+Tired of running `git status`, `git log`, and `git diff` separately? GitPulse shows everything in one live view while you code.
 
 ## Overview
 
