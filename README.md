@@ -40,6 +40,9 @@ python main.py --path /path/to/repo
 
 # Adjust refresh rate (default: 2.0 seconds)
 python main.py --refresh 3.0
+
+# Show version
+python main.py --version
 ```
 
 ## Features
