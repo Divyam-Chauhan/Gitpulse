@@ -8,7 +8,7 @@ from datetime import datetime
 from rich.live import Live
 
 from config import Config, VERSION
-from git_parser import GitParser
+import subprocess
 from ui import Dashboard, GitData
 from watcher import GitWatcher
 
@@ -38,7 +38,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def build_git_data(git_parser: GitParser, repo_path: Path) -> GitData:
+def build_git_data(git_parser, repo_path: Path) -> GitData:
     """Build GitData from current repository state."""
     return GitData(
         branch=git_parser.get_current_branch(),
@@ -53,6 +53,15 @@ def build_git_data(git_parser: GitParser, repo_path: Path) -> GitData:
 
 def main():
     """Main entry point for GitPulse dashboard."""
+    # Check if git is installed
+    try:
+        subprocess.run(["git", "--version"], check=True, capture_output=True)
+    except FileNotFoundError:
+        print("Error: git is not installed or not found in PATH.")
+        sys.exit(1)
+
+    from git_parser import GitParser
+    
     args = parse_args()
     config = Config(refresh_rate=args.refresh, repo_path=args.path)
 
