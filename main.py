@@ -7,7 +7,7 @@ from datetime import datetime
 
 from rich.live import Live
 
-from config import Config
+from config import Config, VERSION
 from git_parser import GitParser
 from ui import Dashboard, GitData
 from watcher import GitWatcher
@@ -29,6 +29,11 @@ def parse_args():
         type=float,
         default=2.0,
         help="Refresh rate in seconds (default: 2.0)"
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"GitPulse {VERSION}"
     )
     return parser.parse_args()
 

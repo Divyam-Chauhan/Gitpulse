@@ -28,6 +28,7 @@ COLORS = {
 # Panel title style
 PANEL_TITLE_STYLE = "bold bright_white"
 
+VERSION = "1.0.0"
 
 @dataclass
 class Config:
