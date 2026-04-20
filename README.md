@@ -60,6 +60,10 @@ python main.py --version
 - watchdog >= 3.0.0
 - GitPython >= 3.0.0
 
+## Maintainer
+
+- **Divyam Chauhan** - [@Divyam-Chauhan](https://github.com/Divyam-Chauhan)
+
 ## License
 
 MIT License
