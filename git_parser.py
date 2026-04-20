@@ -1,10 +1,16 @@
 """Git repository data parser using subprocess and gitpython."""
 from datetime import datetime, timezone
 from pathlib import Path
+import sys
 
-from git import Repo
-from git.exc import InvalidGitRepositoryError, RepositoryDirtyError
-
+try:
+    from git import Repo
+    from git.exc import InvalidGitRepositoryError, RepositoryDirtyError
+except ImportError as e:
+    if "Bad git executable" in str(e):
+        print("Error: git is not installed or not found in PATH.")
+        sys.exit(1)
+    raise
 
 class GitParser:
     """Parses git repository information."""
