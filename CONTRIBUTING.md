@@ -195,3 +195,20 @@ This one's done â€” you're reading it! ðŸŽ‰
 - Print: `"Error: git is not installed or not found in PATH."` and `sys.exit(1)`
 
 **Why beginner-friendly:** It's a simple try/except guard at the top of `main()`. Teaches error handling and UX thinking.
+
+---
+
+### 11. Add animated GIF demo to the README
+
+**What to do:**
+Replace the static Demo/Demo.png in the README.md with an animated GIF (Demo.gif) that shows GitPulse in action.
+
+**GIF Requirements (Max 30s):**
+1. Open terminal & run python main.py
+2. Edit and save a file — watch the dashboard update
+3. Run git add . and git commit — watch commit appear in real time
+4. Clean Ctrl+C exit
+
+**Recommended Tools:** ScreenToGif (Windows), Terminalizer or Asciinema (Mac/Linux).
+
+**Why beginner-friendly:** Pure visual contribution. No code changes, just an app recording and a 1-line README edit.
