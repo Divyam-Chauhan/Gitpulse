@@ -132,7 +132,7 @@ class GitParser:
                                 removed = len([l for l in diff_text.split('\n') if l.startswith('-') and not l.startswith('---')])
                                 files[path]["added"] += added
                                 files[path]["removed"] += removed
-                        except:
+                        except Exception:
                             pass
                 else:
                     # Initial commit - list files
